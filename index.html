@@ -1,0 +1,1969 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>FBR Invoice Portal - TechLogix Digital Integration</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      /* Light Theme (Default) */
+      --color-bg-primary: #f8fafc;
+      --color-bg-secondary: #ffffff;
+      --color-bg-tertiary: #f1f5f9;
+      --color-bg-card: #ffffff;
+      --color-bg-elevated: #ffffff;
+      --color-border: rgba(0, 0, 0, 0.08);
+      --color-border-focus: rgba(14, 165, 233, 0.5);
+      --color-text-primary: #0f172a;
+      --color-text-secondary: #475569;
+      --color-text-muted: #94a3b8;
+      --color-accent: #0ea5e9;
+      --color-accent-hover: #38bdf8;
+      --color-accent-glow: rgba(14, 165, 233, 0.15);
+      --color-accent-secondary: #1e40af;
+      --color-error: #ef4444;
+      --color-error-bg: rgba(239, 68, 68, 0.1);
+      --color-success: #10b981;
+      --color-success-bg: rgba(16, 185, 129, 0.1);
+      --color-warning: #f59e0b;
+      --color-warning-bg: rgba(245, 158, 11, 0.1);
+      --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
+      --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.08);
+      --shadow-lg: 0 8px 32px rgba(0, 0, 0, 0.12);
+      --header-bg: rgba(255, 255, 255, 0.9);
+      --orb-opacity: 0.15;
+    }
+
+    [data-theme="dark"] {
+      --color-bg-primary: #0a0f1a;
+      --color-bg-secondary: #111827;
+      --color-bg-tertiary: #1a2332;
+      --color-bg-card: #161f2e;
+      --color-bg-elevated: #1e2a3d;
+      --color-border: rgba(255, 255, 255, 0.08);
+      --color-border-focus: rgba(14, 165, 233, 0.5);
+      --color-text-primary: #f8fafc;
+      --color-text-secondary: #94a3b8;
+      --color-text-muted: #64748b;
+      --color-accent: #0ea5e9;
+      --color-accent-hover: #38bdf8;
+      --color-accent-glow: rgba(14, 165, 233, 0.2);
+      --color-accent-secondary: #3b82f6;
+      --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.2);
+      --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.3);
+      --shadow-lg: 0 8px 32px rgba(0, 0, 0, 0.4);
+      --header-bg: rgba(10, 15, 26, 0.9);
+      --orb-opacity: 0.3;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      background: var(--color-bg-primary);
+      color: var(--color-text-primary);
+      line-height: 1.5;
+      min-height: 100vh;
+      -webkit-font-smoothing: antialiased;
+      transition: background-color 0.3s ease, color 0.3s ease;
+    }
+
+    .invoice-portal { position: relative; overflow-x: hidden; }
+
+    .ambient-bg {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 0;
+      overflow: hidden;
+    }
+
+    .gradient-orb {
+      position: absolute;
+      border-radius: 50%;
+      filter: blur(100px);
+      opacity: var(--orb-opacity);
+      transition: opacity 0.3s ease;
+    }
+
+    .orb-1 {
+      width: 600px;
+      height: 600px;
+      background: radial-gradient(circle, #0ea5e9 0%, transparent 70%);
+      top: -200px;
+      right: -100px;
+      animation: float 20s ease-in-out infinite;
+    }
+
+    .orb-2 {
+      width: 400px;
+      height: 400px;
+      background: radial-gradient(circle, #1e40af 0%, transparent 70%);
+      bottom: -100px;
+      left: -100px;
+      animation: float 25s ease-in-out infinite reverse;
+    }
+
+    .orb-3 {
+      width: 300px;
+      height: 300px;
+      background: radial-gradient(circle, #7c3aed 0%, transparent 70%);
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      animation: pulse 15s ease-in-out infinite;
+    }
+
+    @keyframes float {
+      0%, 100% { transform: translate(0, 0); }
+      33% { transform: translate(30px, -30px); }
+      66% { transform: translate(-20px, 20px); }
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: calc(var(--orb-opacity) * 0.8); transform: translate(-50%, -50%) scale(1); }
+      50% { opacity: var(--orb-opacity); transform: translate(-50%, -50%) scale(1.1); }
+    }
+
+    .portal-header {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: var(--header-bg);
+      backdrop-filter: blur(20px);
+      border-bottom: 1px solid var(--color-border);
+      transition: background-color 0.3s ease;
+    }
+
+    .header-content {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 0.75rem 2rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .logo-section {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    .company-logo {
+      height: 40px;
+      width: auto;
+      object-fit: contain;
+    }
+
+    .logo-divider {
+      width: 1px;
+      height: 32px;
+      background: var(--color-border);
+      margin: 0 0.5rem;
+    }
+
+    .portal-title {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .portal-title h1 {
+      font-size: 1rem;
+      font-weight: 600;
+      letter-spacing: -0.01em;
+      color: var(--color-text-primary);
+    }
+
+    .portal-title .subtitle {
+      font-size: 0.7rem;
+      color: var(--color-text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+    }
+
+    .header-actions {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    /* Theme Toggle */
+    .theme-toggle {
+      position: relative;
+      width: 56px;
+      height: 28px;
+      background: var(--color-bg-tertiary);
+      border: 1px solid var(--color-border);
+      border-radius: 100px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      display: flex;
+      align-items: center;
+      padding: 2px;
+    }
+
+    .theme-toggle:hover {
+      border-color: var(--color-accent);
+    }
+
+    .theme-toggle-thumb {
+      position: absolute;
+      width: 22px;
+      height: 22px;
+      background: var(--color-accent);
+      border-radius: 50%;
+      transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      left: 2px;
+    }
+
+    [data-theme="dark"] .theme-toggle-thumb {
+      transform: translateX(28px);
+    }
+
+    .theme-toggle-thumb svg {
+      width: 14px;
+      height: 14px;
+    }
+
+    .theme-toggle-icons {
+      display: flex;
+      justify-content: space-between;
+      width: 100%;
+      padding: 0 6px;
+      color: var(--color-text-muted);
+    }
+
+    .theme-toggle-icons svg {
+      width: 14px;
+      height: 14px;
+    }
+
+    .status-pill {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.5rem 1rem;
+      background: var(--color-success-bg);
+      border: 1px solid rgba(16, 185, 129, 0.3);
+      border-radius: 100px;
+      font-size: 0.75rem;
+      font-weight: 500;
+      color: var(--color-success);
+    }
+
+    .status-dot {
+      width: 6px;
+      height: 6px;
+      background: var(--color-success);
+      border-radius: 50%;
+      animation: blink 2s ease-in-out infinite;
+    }
+
+    @keyframes blink {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.4; }
+    }
+
+    .portal-main {
+      position: relative;
+      z-index: 1;
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 2rem;
+    }
+
+    .section-nav {
+      display: flex;
+      gap: 0.5rem;
+      margin-bottom: 2rem;
+      padding: 0.25rem;
+      background: var(--color-bg-secondary);
+      border-radius: 16px;
+      border: 1px solid var(--color-border);
+      box-shadow: var(--shadow-sm);
+      transition: all 0.3s ease;
+    }
+
+    .nav-tab {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+      padding: 1rem 1.5rem;
+      background: transparent;
+      border: none;
+      border-radius: 12px;
+      color: var(--color-text-muted);
+      font-family: inherit;
+      font-size: 0.875rem;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .nav-tab:hover {
+      color: var(--color-text-secondary);
+    }
+
+    .nav-tab.active {
+      background: var(--color-bg-elevated);
+      color: var(--color-text-primary);
+      box-shadow: var(--shadow-md);
+    }
+
+    .nav-tab.active svg {
+      color: var(--color-accent);
+    }
+
+    .item-count {
+      padding: 2px 8px;
+      background: var(--color-accent);
+      color: white;
+      border-radius: 100px;
+      font-size: 0.75rem;
+      font-weight: 600;
+    }
+
+    .form-section {
+      display: none;
+      animation: fadeInUp 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .form-section.active { display: block; }
+
+    @keyframes fadeInUp {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .section-header {
+      margin-bottom: 2rem;
+    }
+
+    .section-header h2 {
+      font-size: 1.5rem;
+      font-weight: 600;
+      letter-spacing: -0.02em;
+      margin-bottom: 0.25rem;
+    }
+
+    .section-header p {
+      color: var(--color-text-muted);
+      font-size: 0.9375rem;
+    }
+
+    .header-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .form-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 1.5rem;
+    }
+
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+
+    .form-group.full-width {
+      grid-column: 1 / -1;
+    }
+
+    .form-group label {
+      font-size: 0.8125rem;
+      font-weight: 500;
+      color: var(--color-text-secondary);
+      display: flex;
+      align-items: center;
+      gap: 0.25rem;
+    }
+
+    .required { color: var(--color-error); }
+
+    .input-wrapper {
+      position: relative;
+    }
+
+    input, textarea, select {
+      width: 100%;
+      padding: 0.875rem 1rem;
+      background: var(--color-bg-secondary);
+      border: 1px solid var(--color-border);
+      border-radius: 10px;
+      color: var(--color-text-primary);
+      font-family: inherit;
+      font-size: 0.9375rem;
+      transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    input::placeholder, textarea::placeholder {
+      color: var(--color-text-muted);
+    }
+
+    input:hover, textarea:hover, select:hover {
+      border-color: rgba(14, 165, 233, 0.3);
+    }
+
+    input:focus, textarea:focus, select:focus {
+      outline: none;
+      border-color: var(--color-border-focus);
+      box-shadow: 0 0 0 3px var(--color-accent-glow);
+    }
+
+    input.error, textarea.error, select.error {
+      border-color: var(--color-error);
+    }
+
+    input.valid, select.valid {
+      border-color: var(--color-success);
+    }
+
+    textarea {
+      resize: vertical;
+      min-height: 80px;
+    }
+
+    select {
+      appearance: none;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%2364748b' stroke-width='2'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 1rem center;
+      padding-right: 2.5rem;
+      cursor: pointer;
+    }
+
+    select option {
+      background: var(--color-bg-secondary);
+      color: var(--color-text-primary);
+    }
+
+    .input-wrapper.currency {
+      position: relative;
+    }
+
+    .input-wrapper.currency input {
+      padding-left: 4.5rem;
+    }
+
+    .currency-selector {
+      position: absolute;
+      left: 1px;
+      top: 1px;
+      bottom: 1px;
+      display: flex;
+      align-items: center;
+    }
+
+    .currency-selector select {
+      border: none;
+      background: var(--color-bg-tertiary);
+      border-radius: 9px 0 0 9px;
+      padding: 0 0.5rem 0 0.75rem;
+      font-size: 0.75rem;
+      font-weight: 600;
+      color: var(--color-text-secondary);
+      height: 100%;
+      min-width: 60px;
+      cursor: pointer;
+    }
+
+    .currency-selector select:focus {
+      outline: none;
+      box-shadow: none;
+    }
+
+    .hint {
+      font-size: 0.75rem;
+      color: var(--color-text-muted);
+    }
+
+    .error-text {
+      font-size: 0.75rem;
+      color: var(--color-error);
+    }
+
+    .section-actions {
+      display: flex;
+      justify-content: flex-end;
+      gap: 1rem;
+      margin-top: 3rem;
+      padding-top: 2rem;
+      border-top: 1px solid var(--color-border);
+    }
+
+    .btn-primary, .btn-ghost, .btn-add, .btn-submit, .btn-validate {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+      font-family: inherit;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+      border: none;
+    }
+
+    .btn-primary {
+      padding: 1rem 1.5rem;
+      background: linear-gradient(135deg, var(--color-accent), #0284c7);
+      color: white;
+      border-radius: 10px;
+      font-size: 0.9375rem;
+    }
+
+    .btn-primary:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 4px 20px var(--color-accent-glow);
+    }
+
+    .btn-ghost {
+      padding: 1rem 1.5rem;
+      background: transparent;
+      color: var(--color-text-secondary);
+      border-radius: 10px;
+      font-size: 0.9375rem;
+      border: 1px solid var(--color-border);
+    }
+
+    .btn-ghost:hover {
+      background: var(--color-bg-secondary);
+      color: var(--color-text-primary);
+      border-color: var(--color-accent);
+    }
+
+    .btn-add {
+      padding: 0.5rem 1rem;
+      background: var(--color-accent-glow);
+      color: var(--color-accent);
+      border-radius: 10px;
+      font-size: 0.875rem;
+      border: 1px solid rgba(14, 165, 233, 0.3);
+    }
+
+    .btn-add:hover {
+      background: var(--color-accent);
+      color: white;
+    }
+
+    .btn-validate {
+      padding: 1rem 2rem;
+      background: var(--color-warning-bg);
+      color: var(--color-warning);
+      border: 1px solid rgba(245, 158, 11, 0.3);
+      border-radius: 10px;
+      font-size: 1rem;
+      font-weight: 600;
+      min-width: 180px;
+    }
+
+    .btn-validate:hover:not(:disabled) {
+      background: var(--color-warning);
+      color: white;
+      transform: translateY(-1px);
+      box-shadow: 0 4px 20px rgba(245, 158, 11, 0.3);
+    }
+
+    .btn-submit {
+      padding: 1rem 2rem;
+      background: linear-gradient(135deg, var(--color-accent), #0284c7);
+      color: white;
+      border-radius: 10px;
+      font-size: 1rem;
+      font-weight: 600;
+      min-width: 180px;
+    }
+
+    .btn-submit:hover:not(:disabled) {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 30px var(--color-accent-glow);
+    }
+
+    .btn-submit:disabled, .btn-validate:disabled {
+      opacity: 0.7;
+      cursor: not-allowed;
+    }
+
+    .btn-icon {
+      width: 32px;
+      height: 32px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      background: var(--color-bg-tertiary);
+      color: var(--color-text-muted);
+      border-radius: 6px;
+      border: none;
+      cursor: pointer;
+      transition: all 0.25s;
+    }
+
+    .btn-icon:hover {
+      background: var(--color-bg-elevated);
+      color: var(--color-text-primary);
+    }
+
+    .btn-icon.danger:hover {
+      background: var(--color-error-bg);
+      color: var(--color-error);
+    }
+
+    .items-container {
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+    }
+
+    .item-card {
+      background: var(--color-bg-card);
+      border: 1px solid var(--color-border);
+      border-radius: 16px;
+      overflow: hidden;
+      transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+      box-shadow: var(--shadow-sm);
+    }
+
+    .item-card:hover {
+      border-color: rgba(14, 165, 233, 0.2);
+    }
+
+    .item-card.expanded {
+      border-color: var(--color-border-focus);
+      box-shadow: var(--shadow-lg);
+    }
+
+    .item-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 1rem 1.5rem;
+      cursor: pointer;
+      transition: background 0.15s;
+    }
+
+    .item-header:hover {
+      background: var(--color-bg-tertiary);
+    }
+
+    .item-summary {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    .item-number {
+      width: 32px;
+      height: 32px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: var(--color-accent-glow);
+      color: var(--color-accent);
+      border-radius: 6px;
+      font-size: 0.8125rem;
+      font-weight: 600;
+      font-family: 'JetBrains Mono', monospace;
+    }
+
+    .item-info {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+
+    .item-desc {
+      font-weight: 500;
+      color: var(--color-text-primary);
+    }
+
+    .item-meta {
+      font-size: 0.8125rem;
+      color: var(--color-text-muted);
+      font-family: 'JetBrains Mono', monospace;
+    }
+
+    .item-actions {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .expand-icon {
+      display: flex;
+      color: var(--color-text-muted);
+      transition: transform 0.25s;
+    }
+
+    .item-card.expanded .expand-icon {
+      transform: rotate(180deg);
+    }
+
+    .item-body {
+      padding: 1.5rem;
+      background: var(--color-bg-secondary);
+      border-top: 1px solid var(--color-border);
+      display: none;
+    }
+
+    .item-card.expanded .item-body {
+      display: block;
+      animation: slideIn 0.2s ease-out;
+    }
+
+    @keyframes slideIn {
+      from { opacity: 0; transform: scale(0.95); }
+      to { opacity: 1; transform: scale(1); }
+    }
+
+    .item-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 1.5rem;
+    }
+
+    .item-grid .form-group.span-2 {
+      grid-column: span 2;
+    }
+
+    .item-grid input,
+    .item-grid select {
+      padding: 0.625rem 1rem;
+      background: var(--color-bg-tertiary);
+      font-size: 0.875rem;
+    }
+
+    .item-grid .input-wrapper.currency input {
+      padding-left: 4.5rem;
+    }
+
+    .summary-card {
+      margin-top: 2rem;
+      padding: 1.5rem;
+      background: var(--color-bg-card);
+      border: 1px solid var(--color-border);
+      border-radius: 16px;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .summary-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0.5rem 0;
+    }
+
+    .summary-row:not(:last-child) {
+      border-bottom: 1px solid var(--color-border);
+    }
+
+    .summary-row.total {
+      padding-top: 1rem;
+      margin-top: 0.5rem;
+      border-bottom: none;
+    }
+
+    .summary-row.total .summary-label {
+      font-size: 1rem;
+      font-weight: 600;
+      color: var(--color-text-primary);
+    }
+
+    .summary-row.total .summary-value {
+      font-size: 1.25rem;
+      font-weight: 700;
+      color: var(--color-accent);
+    }
+
+    .summary-label {
+      color: var(--color-text-secondary);
+      font-size: 0.875rem;
+    }
+
+    .summary-value {
+      font-family: 'JetBrains Mono', monospace;
+      font-weight: 600;
+      color: var(--color-text-primary);
+    }
+
+    .summary-value.tax {
+      color: var(--color-warning);
+    }
+
+    /* Final Actions */
+    .final-actions {
+      display: flex;
+      gap: 1rem;
+      margin-top: 2rem;
+      padding-top: 2rem;
+      border-top: 1px solid var(--color-border);
+    }
+
+    .final-actions .btn-validate {
+      flex: 1;
+    }
+
+    .final-actions .btn-submit {
+      flex: 1;
+    }
+
+    /* Validation Results */
+    .validation-results {
+      margin-top: 1.5rem;
+      padding: 1rem;
+      border-radius: 10px;
+      display: none;
+    }
+
+    .validation-results.show {
+      display: block;
+      animation: slideIn 0.2s ease-out;
+    }
+
+    .validation-results.success {
+      background: var(--color-success-bg);
+      border: 1px solid rgba(16, 185, 129, 0.3);
+    }
+
+    .validation-results.error {
+      background: var(--color-error-bg);
+      border: 1px solid rgba(239, 68, 68, 0.3);
+    }
+
+    .validation-header {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-weight: 600;
+      margin-bottom: 0.5rem;
+    }
+
+    .validation-results.success .validation-header {
+      color: var(--color-success);
+    }
+
+    .validation-results.error .validation-header {
+      color: var(--color-error);
+    }
+
+    .validation-list {
+      list-style: none;
+      font-size: 0.875rem;
+    }
+
+    .validation-list li {
+      padding: 0.25rem 0;
+      padding-left: 1.25rem;
+      position: relative;
+    }
+
+    .validation-list li::before {
+      content: '•';
+      position: absolute;
+      left: 0;
+    }
+
+    .validation-results.success .validation-list {
+      color: var(--color-success);
+    }
+
+    .validation-results.error .validation-list {
+      color: var(--color-error);
+    }
+
+    /* Modal */
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.5);
+      backdrop-filter: blur(8px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 2rem;
+      z-index: 1000;
+      display: none;
+    }
+
+    .modal-overlay.active {
+      display: flex;
+    }
+
+    .modal {
+      width: 100%;
+      max-width: 480px;
+      background: var(--color-bg-card);
+      border: 1px solid var(--color-border);
+      border-radius: 24px;
+      padding: 3rem;
+      text-align: center;
+      animation: slideIn 0.2s ease-out;
+      box-shadow: var(--shadow-lg);
+    }
+
+    .modal-icon {
+      width: 80px;
+      height: 80px;
+      margin: 0 auto 1.5rem;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .modal-icon.success {
+      background: var(--color-success-bg);
+      color: var(--color-success);
+    }
+
+    .modal-icon.error {
+      background: var(--color-error-bg);
+      color: var(--color-error);
+    }
+
+    .modal h3 {
+      font-size: 1.25rem;
+      font-weight: 600;
+      margin-bottom: 0.5rem;
+    }
+
+    .modal p {
+      color: var(--color-text-secondary);
+      margin-bottom: 1.5rem;
+    }
+
+    .response-data {
+      margin: 1.5rem 0;
+      padding: 1rem;
+      background: var(--color-bg-secondary);
+      border-radius: 10px;
+      text-align: left;
+      max-height: 200px;
+      overflow: auto;
+    }
+
+    .response-data pre {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.75rem;
+      color: var(--color-text-muted);
+      white-space: pre-wrap;
+      word-break: break-all;
+    }
+
+    .modal-actions {
+      display: flex;
+      gap: 1rem;
+      justify-content: center;
+    }
+
+    .spinner {
+      width: 18px;
+      height: 18px;
+      border: 2px solid rgba(255, 255, 255, 0.3);
+      border-top-color: white;
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    @media (max-width: 768px) {
+      .header-content { padding: 0.75rem 1rem; }
+      .company-logo { height: 32px; }
+      .portal-title h1 { font-size: 0.875rem; }
+      .logo-divider { display: none; }
+      .status-pill { display: none; }
+      .portal-main { padding: 1rem; }
+      .section-nav { flex-wrap: wrap; }
+      .nav-tab {
+        flex: 1 1 45%;
+        padding: 0.75rem 1rem;
+      }
+      .form-grid { grid-template-columns: 1fr; }
+      .item-grid { grid-template-columns: repeat(2, 1fr); }
+      .item-grid .form-group.span-2 { grid-column: 1 / -1; }
+      .section-actions { flex-direction: column; }
+      .section-actions button { width: 100%; }
+      .final-actions { flex-direction: column; }
+    }
+
+    ::-webkit-scrollbar { width: 8px; height: 8px; }
+    ::-webkit-scrollbar-track { background: var(--color-bg-secondary); }
+    ::-webkit-scrollbar-thumb { background: var(--color-bg-elevated); border-radius: 4px; }
+    ::-webkit-scrollbar-thumb:hover { background: var(--color-text-muted); }
+    ::selection { background: var(--color-accent); color: white; }
+
+    input[type='number']::-webkit-inner-spin-button,
+    input[type='number']::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0; }
+    input[type='number'] { -moz-appearance: textfield; }
+    input[type='date']::-webkit-calendar-picker-indicator { filter: invert(0.5); cursor: pointer; }
+    [data-theme="dark"] input[type='date']::-webkit-calendar-picker-indicator { filter: invert(0.6); }
+  </style>
+</head>
+<body>
+  <div class="invoice-portal" id="app">
+    <div class="ambient-bg">
+      <div class="gradient-orb orb-1"></div>
+      <div class="gradient-orb orb-2"></div>
+      <div class="gradient-orb orb-3"></div>
+    </div>
+
+    <header class="portal-header">
+      <div class="header-content">
+        <div class="logo-section">
+          <img src="https://www.techlogix.com/wp-content/uploads/2019/01/techxlogo.png" alt="TechLogix" class="company-logo" onerror="this.style.display='none'">
+          <div class="logo-divider"></div>
+          <div class="portal-title">
+            <h1>FBR Invoice Portal</h1>
+            <span class="subtitle">Digital Integration Gateway</span>
+          </div>
+        </div>
+        <div class="header-actions">
+          <button class="theme-toggle" onclick="toggleTheme()" title="Toggle theme">
+            <div class="theme-toggle-icons">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <circle cx="12" cy="12" r="5"/>
+                <line x1="12" y1="1" x2="12" y2="3"/>
+                <line x1="12" y1="21" x2="12" y2="23"/>
+                <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/>
+                <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/>
+                <line x1="1" y1="12" x2="3" y2="12"/>
+                <line x1="21" y1="12" x2="23" y2="12"/>
+                <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/>
+                <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>
+              </svg>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
+              </svg>
+            </div>
+            <div class="theme-toggle-thumb">
+              <svg class="sun-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <circle cx="12" cy="12" r="5"/>
+              </svg>
+            </div>
+          </button>
+          <button class="btn-ghost" onclick="exportPayload()" title="Export JSON">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+              <polyline points="7 10 12 15 17 10"/>
+              <line x1="12" y1="15" x2="12" y2="3"/>
+            </svg>
+            Export
+          </button>
+          <div class="status-pill">
+            <span class="status-dot"></span>
+            API Connected
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <main class="portal-main">
+      <nav class="section-nav">
+        <button class="nav-tab active" data-section="seller" onclick="setActiveSection('seller')">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M3 21h18"/><path d="M9 8h1"/><path d="M9 12h1"/><path d="M9 16h1"/>
+            <path d="M14 8h1"/><path d="M14 12h1"/><path d="M14 16h1"/>
+            <path d="M5 21V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v16"/>
+          </svg>
+          <span>Seller</span>
+        </button>
+        <button class="nav-tab" data-section="buyer" onclick="setActiveSection('buyer')">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/>
+            <circle cx="9" cy="7" r="4"/>
+            <path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+          </svg>
+          <span>Buyer</span>
+        </button>
+        <button class="nav-tab" data-section="invoice" onclick="setActiveSection('invoice')">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+            <polyline points="14 2 14 8 20 8"/>
+            <line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/>
+            <polyline points="10 9 9 9 8 9"/>
+          </svg>
+          <span>Invoice</span>
+        </button>
+        <button class="nav-tab" data-section="items" onclick="setActiveSection('items')">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/>
+            <line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/>
+            <line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/>
+          </svg>
+          <span>Items</span>
+          <span class="item-count" id="itemCount">1</span>
+        </button>
+      </nav>
+
+      <form id="invoiceForm" onsubmit="submitInvoice(event)">
+        <!-- Seller Section -->
+        <section class="form-section active" id="section-seller">
+          <div class="section-header">
+            <h2>Seller Information</h2>
+            <p>Enter the seller/supplier details for this invoice</p>
+          </div>
+          
+          <div class="form-grid">
+            <div class="form-group">
+              <label>NTN / CNIC <span class="required">*</span></label>
+              <input type="text" id="sellerNTNCNIC" value="1420352" placeholder="e.g., 1420352" required pattern="\d{7,13}" disabled>
+            </div>
+            <div class="form-group">
+              <label>Business Name <span class="required">*</span></label>
+              <input type="text" id="sellerBusinessName" value="Techlogix Pakistan (Pvt) Ltd" placeholder="e.g., Techlogix Pakistan (Pvt) Ltd" required minlength="3" disabled>
+            </div>
+            <div class="form-group">
+              <label>Province <span class="required">*</span></label>
+              <select id="sellerProvince" value="Punjab" required disabled>
+                <option value="Punjab">Punjab</option>
+                <option value="Sindh">Sindh</option>
+                <option value="Khyber Pakhtunkhwa">Khyber Pakhtunkhwa</option>
+                <option value="Balochistan">Balochistan</option>
+                <option value="Islamabad Capital Territory">Islamabad Capital Territory</option>
+                <option value="Gilgit-Baltistan">Gilgit-Baltistan</option>
+                <option value="Azad Kashmir">Azad Kashmir</option>
+              </select>
+            </div>
+            <div class="form-group full-width">
+              <label>Address <span class="required">*</span></label>
+              <textarea id="sellerAddress" value="Lahore" placeholder="Enter complete business address" rows="2" required minlength="5" disabled>Lahore</textarea>
+            </div>
+          </div>
+
+          <div class="section-actions">
+            <button type="button" class="btn-primary" onclick="setActiveSection('buyer')">
+              Continue to Buyer
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/>
+              </svg>
+            </button>
+          </div>
+        </section>
+
+        <!-- Buyer Section -->
+        <section class="form-section" id="section-buyer">
+          <div class="section-header">
+            <h2>Buyer Information</h2>
+            <p>Enter the buyer/customer details for this invoice</p>
+          </div>
+          
+          <div class="form-grid">
+            <div class="form-group">
+              <label>NTN / CNIC <span class="required">*</span></label>
+              <input type="text" id="buyerNTNCNIC" placeholder="e.g., 1000000000056" required pattern="\d{7,13}">
+            </div>
+            <div class="form-group">
+              <label>Business Name <span class="required">*</span></label>
+              <input type="text" id="buyerBusinessName" placeholder="e.g., Askari Bank Ltd." required minlength="3">
+            </div>
+            <div class="form-group">
+              <label>Province <span class="required">*</span></label>
+              <select id="buyerProvince" required>
+                <option value="Punjab">Punjab</option>
+                <option value="Sindh">Sindh</option>
+                <option value="Khyber Pakhtunkhwa">Khyber Pakhtunkhwa</option>
+                <option value="Balochistan">Balochistan</option>
+                <option value="Islamabad Capital Territory">Islamabad Capital Territory</option>
+                <option value="Gilgit-Baltistan">Gilgit-Baltistan</option>
+                <option value="Azad Kashmir">Azad Kashmir</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label>Registration Type <span class="required">*</span></label>
+              <select id="buyerRegistrationType" required>
+                <option value="Registered">Registered</option>
+                <option value="Unregistered" selected>Unregistered</option>
+              </select>
+            </div>
+            <div class="form-group full-width">
+              <label>Address <span class="required">*</span></label>
+              <textarea id="buyerAddress" placeholder="Enter complete business address" rows="2" required minlength="5"></textarea>
+            </div>
+          </div>
+
+          <div class="section-actions">
+            <button type="button" class="btn-ghost" onclick="setActiveSection('seller')">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/>
+              </svg>
+              Back
+            </button>
+            <button type="button" class="btn-primary" onclick="setActiveSection('invoice')">
+              Continue to Invoice
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/>
+              </svg>
+            </button>
+          </div>
+        </section>
+
+        <!-- Invoice Section -->
+        <section class="form-section" id="section-invoice">
+          <div class="section-header">
+            <h2>Invoice Details</h2>
+            <p>Configure the invoice type and reference information</p>
+          </div>
+          
+          <div class="form-grid">
+            <div class="form-group">
+              <label>Invoice Type <span class="required">*</span></label>
+              <select id="invoiceType" required>
+                <option value="Sale Invoice" selected>Sale Invoice</option>
+                <option value="Return Invoice">Return Invoice</option>
+                <option value="Debit Note">Debit Note</option>
+                <option value="Credit Note">Credit Note</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label>Invoice Date <span class="required">*</span></label>
+              <input type="date" id="invoiceDate" required>
+            </div>
+            <div class="form-group">
+              <label>Reference Number <span class="required">*</span></label>
+              <input type="text" id="invoiceRefNo" placeholder="e.g., SI-20250204-001" required pattern="[A-Za-z0-9-]+">
+            </div>
+            <div class="form-group">
+              <label>Scenario ID <span class="required">*</span></label>
+              <select id="scenarioId" required>
+                <option value="SN001">SN001 - Standard Sales</option>
+                <option value="SN002">SN002 - Export Sales</option>
+                <option value="SN003">SN003 - Zero Rated Supplies</option>
+                <option value="SN004">SN004 - Exempt Supplies</option>
+                <option value="SN005">SN005 - Retail Sales</option>
+                <option value="SN006">SN006 - Wholesale Sales</option>
+                <option value="SN010">SN010 - Imported Goods</option>
+                <option value="SN015">SN015 - Manufacturing</option>
+                <option value="SN018" selected>SN018 - Services (FED)</option>
+                <option value="SN020">SN020 - Third Schedule</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label>Default Currency</label>
+              <select id="defaultCurrency" onchange="updateAllCurrencies()">
+                <option value="PKR" selected>PKR - Pakistani Rupee</option>
+                <option value="USD">USD - US Dollar</option>
+                <option value="EUR">EUR - Euro</option>
+                <option value="GBP">GBP - British Pound</option>
+                <option value="AED">AED - UAE Dirham</option>
+                <option value="SAR">SAR - Saudi Riyal</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="section-actions">
+            <button type="button" class="btn-ghost" onclick="setActiveSection('buyer')">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/>
+              </svg>
+              Back
+            </button>
+            <button type="button" class="btn-primary" onclick="setActiveSection('items')">
+              Continue to Items
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/>
+              </svg>
+            </button>
+          </div>
+        </section>
+
+        <!-- Items Section -->
+        <section class="form-section" id="section-items">
+          <div class="section-header">
+            <div class="header-row">
+              <div>
+                <h2>Line Items</h2>
+                <p>Add products or services to this invoice</p>
+              </div>
+              <button type="button" class="btn-add" onclick="addItem()">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>
+                </svg>
+                Add Item
+              </button>
+            </div>
+          </div>
+
+          <div class="items-container" id="itemsContainer"></div>
+
+          <div class="summary-card">
+            <div class="summary-row">
+              <span class="summary-label">Total Items</span>
+              <span class="summary-value" id="totalItems">1</span>
+            </div>
+            <div class="summary-row">
+              <span class="summary-label">Subtotal</span>
+              <span class="summary-value" id="subtotal">PKR 0.00</span>
+            </div>
+            <div class="summary-row">
+              <span class="summary-label">Total Tax</span>
+              <span class="summary-value tax" id="totalTax">PKR 0.00</span>
+            </div>
+            <div class="summary-row total">
+              <span class="summary-label">Grand Total</span>
+              <span class="summary-value" id="grandTotal">PKR 0.00</span>
+            </div>
+          </div>
+
+          <!-- Validation Results -->
+          <div class="validation-results" id="validationResults">
+            <div class="validation-header">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" id="validationIcon"></svg>
+              <span id="validationTitle"></span>
+            </div>
+            <ul class="validation-list" id="validationList"></ul>
+          </div>
+
+          <!-- Final Actions -->
+          <div class="final-actions">
+            <button type="button" class="btn-validate" id="validateBtn" onclick="validateInvoice()">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M9 11l3 3L22 4"/>
+                <path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/>
+              </svg>
+              Validate Invoice
+            </button>
+            <button type="submit" class="btn-submit" id="submitBtn">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M22 2L11 13"/><path d="M22 2L15 22l-4-9-9-4 20-7z"/>
+              </svg>
+              Submit to FBR
+            </button>
+          </div>
+        </section>
+      </form>
+    </main>
+
+    <!-- Success Modal -->
+    <div class="modal-overlay" id="successModal">
+      <div class="modal success">
+        <div class="modal-icon success">
+          <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/>
+            <polyline points="22 4 12 14.01 9 11.01"/>
+          </svg>
+        </div>
+        <p id="successMessage">Your invoice has been submitted to FBR.</p>
+        <div class="response-data" id="responseData" style="display: none;">
+          <pre id="responseJson"></pre>
+        </div>
+        <div class="modal-actions">
+          <button class="btn-ghost" onclick="closeModal('successModal')">Close</button>
+          <button class="btn-primary" onclick="resetForm()">New Invoice</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Error Modal -->
+    <div class="modal-overlay" id="errorModal">
+      <div class="modal error">
+        <div class="modal-icon error">
+          <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="10"/>
+            <line x1="12" y1="8" x2="12" y2="12"/>
+            <line x1="12" y1="16" x2="12.01" y2="16"/>
+          </svg>
+        </div>
+        <h3>Submission Failed</h3>
+        <p id="errorMessage">There was an error submitting your invoice.</p>
+        <div class="modal-actions">
+          <button class="btn-primary" onclick="closeModal('errorModal')">Try Again</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+  // API Configuration
+  const SUBMIT_URL   = 'https://gw.fbr.gov.pk/di_data/v1/di/postinvoicedata_sb';
+  const VALIDATE_URL = 'https://gw.fbr.gov.pk/di_data/v1/di/validateinvoicedata_sb';
+  const AUTH_TOKEN   = 'f7cee903-32f0-346e-beea-8a66e05a0517';
+
+  // State
+  let items = [createDefaultItem()];
+  let expandedItem = 0;
+  let currentCurrency = 'PKR';
+  let currentTheme = localStorage.getItem('theme') || 'light';
+
+  // Initialize
+  document.addEventListener('DOMContentLoaded', () => {
+    setTheme(currentTheme);
+    initializeDefaults();
+    renderItems();
+  });
+
+  // Theme Toggle
+  function toggleTheme() {
+    currentTheme = currentTheme === 'light' ? 'dark' : 'light';
+    setTheme(currentTheme);
+  }
+
+  function setTheme(theme) {
+    document.documentElement.setAttribute('data-theme', theme);
+    localStorage.setItem('theme', theme);
+    currentTheme = theme;
+
+    const thumbIcon = document.querySelector('.theme-toggle-thumb svg');
+    if (theme === 'dark') {
+      thumbIcon.innerHTML = '<path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>';
+    } else {
+      thumbIcon.innerHTML = '<circle cx="12" cy="12" r="5"/>';
+    }
+  }
+
+  function initializeDefaults() {
+    const today = new Date().toISOString().split('T')[0];
+    document.getElementById('invoiceDate').value = today;
+    const refNo = `SI-${today.replace(/-/g, '')}-${String(Math.floor(Math.random() * 1000)).padStart(3, '0')}`;
+    document.getElementById('invoiceRefNo').value = refNo;
+  }
+
+  function createDefaultItem() {
+    return {
+      hsCode: '',
+      productDescription: '',
+      rate: '8%',
+      uoM: '',
+      quantity: 1,
+      totalValues: 0,
+      valueSalesExcludingST: 0,
+      fixedNotifiedValueOrRetailPrice: 0,
+      salesTaxApplicable: 0,
+      salesTaxWithheldAtSource: 0,
+      extraTax: 0,
+      furtherTax: 0,
+      sroScheduleNo: '',
+      fedPayable: 0,
+      discount: 0,
+      saleType: 'Services (FED in ST Mode)',
+      sroItemSerialNo: '',
+      currency: 'PKR'
+    };
+  }
+
+  function setActiveSection(section) {
+    document.querySelectorAll('.form-section').forEach(s => s.classList.remove('active'));
+    document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
+    document.getElementById(`section-${section}`).classList.add('active');
+    document.querySelector(`[data-section="${section}"]`).classList.add('active');
+  }
+
+  function updateAllCurrencies() {
+    currentCurrency = document.getElementById('defaultCurrency').value;
+    items.forEach(item => item.currency = currentCurrency);
+    renderItems();
+  }
+
+  function renderItems() {
+    const container = document.getElementById('itemsContainer');
+    const currencies = ['PKR', 'USD', 'EUR', 'GBP', 'AED', 'SAR'];
+
+    container.innerHTML = items.map((item, index) => `
+      <div class="item-card ${expandedItem === index ? 'expanded' : ''}" data-index="${index}">
+        <div class="item-header" onclick="toggleItem(${index})">
+          <div class="item-summary">
+            <span class="item-number">#${index + 1}</span>
+            <div class="item-info">
+              <span class="item-desc">${item.productDescription || 'New Item'}</span>
+              <span class="item-meta">HS: ${item.hsCode || '----'} | Qty: ${item.quantity} | ${formatCurrency(item.valueSalesExcludingST, item.currency)}</span>
+            </div>
+          </div>
+          <div class="item-actions">
+            <button type="button" class="btn-icon" onclick="duplicateItem(${index}); event.stopPropagation();" title="Duplicate">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <rect x="9" y="9" width="13" height="13" rx="2" ry="2"/>
+                <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/>
+              </svg>
+            </button>
+            ${items.length > 1 ? `
+              <button type="button" class="btn-icon danger" onclick="removeItem(${index}); event.stopPropagation();" title="Remove">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <polyline points="3 6 5 6 21 6"/>
+                  <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/>
+                </svg>
+              </button>
+            ` : ''}
+            <span class="expand-icon">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <polyline points="6 9 12 15 18 9"/>
+              </svg>
+            </span>
+          </div>
+        </div>
+        <div class="item-body">
+          <div class="item-grid">
+            <div class="form-group">
+              <label>HS Code <span class="required">*</span></label>
+              <input type="text" value="${item.hsCode}" onchange="updateItem(${index}, 'hsCode', this.value)" placeholder="e.g., 9815.6000">
+              <span class="hint">Format: 0000.0000</span>
+            </div>
+
+            <div class="form-group span-2">
+              <label>Product Description <span class="required">*</span></label>
+              <input type="text" value="${item.productDescription}" onchange="updateItem(${index}, 'productDescription', this.value)" placeholder="Enter product or service description">
+            </div>
+
+            <div class="form-group">
+              <label>Sale Type <span class="required">*</span></label>
+              <select onchange="updateItem(${index}, 'saleType', this.value)">
+                <option value="Services (FED in ST Mode)" ${item.saleType === 'Services (FED in ST Mode)' ? 'selected' : ''}>Services (FED in ST Mode)</option>
+                <option value="Goods" ${item.saleType === 'Goods' ? 'selected' : ''}>Goods</option>
+                <option value="Services (Standard)" ${item.saleType === 'Services (Standard)' ? 'selected' : ''}>Services (Standard)</option>
+                <option value="Export" ${item.saleType === 'Export' ? 'selected' : ''}>Export</option>
+                <option value="Zero Rated" ${item.saleType === 'Zero Rated' ? 'selected' : ''}>Zero Rated</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label>Tax Rate <span class="required">*</span></label>
+              <select onchange="updateItem(${index}, 'rate', this.value)">
+                ${['0%', '5%', '8%', '10%', '12%', '13%', '15%', '16%', '17%', '18%', '20%'].map(r =>
+                  `<option value="${r}" ${item.rate === r ? 'selected' : ''}>${r}</option>`
+                ).join('')}
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label>Quantity <span class="required">*</span></label>
+              <input type="number" value="${item.quantity}" onchange="updateItem(${index}, 'quantity', parseInt(this.value || '0'))" min="1">
+            </div>
+
+            <div class="form-group">
+              <label>Unit of Measure</label>
+              <input type="text" value="${item.uoM}" onchange="updateItem(${index}, 'uoM', this.value)" placeholder="e.g., Pcs, Kg, Hrs">
+            </div>
+
+            <div class="form-group">
+              <label>Value (Excl. ST) <span class="required">*</span></label>
+              <div class="input-wrapper currency">
+                <div class="currency-selector">
+                  <select onchange="updateItem(${index}, 'currency', this.value)">
+                    ${currencies.map(c => `<option value="${c}" ${item.currency === c ? 'selected' : ''}>${c}</option>`).join('')}
+                  </select>
+                </div>
+                <input type="number" value="${item.valueSalesExcludingST}" onchange="updateItem(${index}, 'valueSalesExcludingST', parseFloat(this.value) || 0)" min="0" step="0.01">
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label>Sales Tax</label>
+              <div class="input-wrapper currency">
+                <div class="currency-selector">
+                  <select disabled><option>${item.currency}</option></select>
+                </div>
+                <input type="number" value="${item.salesTaxApplicable}" readonly style="opacity: 0.7; cursor: not-allowed;">
+              </div>
+              <span class="hint">Auto-calculated</span>
+            </div>
+
+            <div class="form-group">
+              <label>Discount</label>
+              <div class="input-wrapper currency">
+                <div class="currency-selector">
+                  <select disabled><option>${item.currency}</option></select>
+                </div>
+                <input type="number" value="${item.discount}" onchange="updateItem(${index}, 'discount', parseFloat(this.value) || 0)" min="0" step="0.01">
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label>Extra Tax</label>
+              <div class="input-wrapper currency">
+                <div class="currency-selector">
+                  <select disabled><option>${item.currency}</option></select>
+                </div>
+                <input type="number" value="${item.extraTax}" onchange="updateItem(${index}, 'extraTax', parseFloat(this.value) || 0)" min="0" step="0.01">
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label>Further Tax</label>
+              <div class="input-wrapper currency">
+                <div class="currency-selector">
+                  <select disabled><option>${item.currency}</option></select>
+                </div>
+                <input type="number" value="${item.furtherTax}" onchange="updateItem(${index}, 'furtherTax', parseFloat(this.value) || 0)" min="0" step="0.01">
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label>FED Payable</label>
+              <div class="input-wrapper currency">
+                <div class="currency-selector">
+                  <select disabled><option>${item.currency}</option></select>
+                </div>
+                <input type="number" value="${item.fedPayable}" onchange="updateItem(${index}, 'fedPayable', parseFloat(this.value) || 0)" min="0" step="0.01">
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </div>
+    `).join('');
+
+    updateSummary();
+    document.getElementById('itemCount').textContent = items.length;
+  }
+
+  function toggleItem(index) {
+    expandedItem = expandedItem === index ? -1 : index;
+    renderItems();
+  }
+
+  function updateItem(index, field, value) {
+    items[index][field] = value;
+
+    // auto calc sales tax
+    if (field === 'valueSalesExcludingST' || field === 'rate' || field === 'discount') {
+      const item = items[index];
+      const rate = parseFloat(item.rate.replace('%', '')) / 100;
+      const taxableValue = (item.valueSalesExcludingST || 0) - (item.discount || 0);
+      item.salesTaxApplicable = Math.round(taxableValue * rate * 100) / 100;
+    }
+
+    renderItems();
+    hideValidationResults();
+  }
+
+  function addItem() {
+    const newItem = createDefaultItem();
+    newItem.currency = currentCurrency;
+    items.push(newItem);
+    expandedItem = items.length - 1;
+    renderItems();
+    hideValidationResults();
+  }
+
+  function removeItem(index) {
+    if (items.length > 1) {
+      items.splice(index, 1);
+      if (expandedItem === index) expandedItem = -1;
+      else if (expandedItem > index) expandedItem--;
+      renderItems();
+      hideValidationResults();
+    }
+  }
+
+  function duplicateItem(index) {
+    const newItem = { ...items[index] };
+    items.splice(index + 1, 0, newItem);
+    expandedItem = index + 1;
+    renderItems();
+    hideValidationResults();
+  }
+
+  function updateSummary() {
+    const currency = items[0]?.currency || 'PKR';
+    const subtotal = items.reduce((sum, item) => sum + (item.valueSalesExcludingST || 0), 0);
+    const totalTax = items.reduce((sum, item) => sum + (item.salesTaxApplicable || 0), 0);
+    const grandTotal = subtotal + totalTax;
+
+    document.getElementById('totalItems').textContent = items.length;
+    document.getElementById('subtotal').textContent = formatCurrency(subtotal, currency);
+    document.getElementById('totalTax').textContent = formatCurrency(totalTax, currency);
+    document.getElementById('grandTotal').textContent = formatCurrency(grandTotal, currency);
+  }
+
+  function formatCurrency(amount, currency = 'PKR') {
+    const symbols = { PKR: 'PKR', USD: '$', EUR: '€', GBP: '£', AED: 'AED', SAR: 'SAR' };
+    const symbol = symbols[currency] || currency;
+    return `${symbol} ${(amount || 0).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+  }
+
+  function buildPayload() {
+    return {
+      invoiceType: document.getElementById('invoiceType').value,
+      invoiceDate: document.getElementById('invoiceDate').value,
+      sellerNTNCNIC: document.getElementById('sellerNTNCNIC').value,
+      sellerBusinessName: document.getElementById('sellerBusinessName').value,
+      sellerProvince: document.getElementById('sellerProvince').value,
+      sellerAddress: document.getElementById('sellerAddress').value,
+      buyerNTNCNIC: document.getElementById('buyerNTNCNIC').value,
+      buyerBusinessName: document.getElementById('buyerBusinessName').value,
+      buyerProvince: document.getElementById('buyerProvince').value,
+      buyerAddress: document.getElementById('buyerAddress').value,
+      buyerRegistrationType: document.getElementById('buyerRegistrationType').value,
+      invoiceRefNo: document.getElementById('invoiceRefNo').value,
+      scenarioId: document.getElementById('scenarioId').value,
+      items: items.map(item => ({
+        hsCode: item.hsCode,
+        productDescription: item.productDescription,
+        rate: item.rate,
+        uoM: item.uoM || '',
+        quantity: Number(item.quantity),
+        totalValues: Number(item.totalValues) || 0,
+        valueSalesExcludingST: Number(item.valueSalesExcludingST),
+        fixedNotifiedValueOrRetailPrice: Number(item.fixedNotifiedValueOrRetailPrice) || 0,
+        salesTaxApplicable: Number(item.salesTaxApplicable),
+        salesTaxWithheldAtSource: Number(item.salesTaxWithheldAtSource) || 0,
+        extraTax: Number(item.extraTax) || 0,
+        furtherTax: Number(item.furtherTax) || 0,
+        sroScheduleNo: item.sroScheduleNo || '',
+        fedPayable: Number(item.fedPayable) || 0,
+        discount: Number(item.discount) || 0,
+        saleType: item.saleType,
+        sroItemSerialNo: item.sroItemSerialNo || ''
+      }))
+    };
+  }
+
+  // ------------------------------
+  // Local validation (same logic you had)
+  // ------------------------------
+  function runLocalValidation() {
+    const errors = [];
+    const payload = buildPayload();
+
+    if (!payload.sellerNTNCNIC) errors.push('Seller NTN/CNIC is required');
+    else if (!/^\d{7,13}$/.test(payload.sellerNTNCNIC)) errors.push('Seller NTN/CNIC must be 7-13 digits');
+    if (!payload.sellerBusinessName || payload.sellerBusinessName.length < 3) errors.push('Seller business name is required (min 3 chars)');
+    if (!payload.sellerAddress || payload.sellerAddress.length < 5) errors.push('Seller address is required (min 5 chars)');
+
+    if (!payload.buyerNTNCNIC) errors.push('Buyer NTN/CNIC is required');
+    else if (!/^\d{7,13}$/.test(payload.buyerNTNCNIC)) errors.push('Buyer NTN/CNIC must be 7-13 digits');
+    if (!payload.buyerBusinessName || payload.buyerBusinessName.length < 3) errors.push('Buyer business name is required (min 3 chars)');
+    if (!payload.buyerAddress || payload.buyerAddress.length < 5) errors.push('Buyer address is required (min 5 chars)');
+
+    if (!payload.invoiceDate) errors.push('Invoice date is required');
+    if (!payload.invoiceRefNo) errors.push('Invoice reference number is required');
+
+    if (payload.items.length === 0) errors.push('At least one item is required');
+    payload.items.forEach((item, index) => {
+      if (!item.hsCode) errors.push(`Item ${index + 1}: HS Code is required`);
+      else if (!/^\d{4}\.\d{4}$/.test(item.hsCode)) errors.push(`Item ${index + 1}: HS Code must be in format 0000.0000`);
+      if (!item.productDescription) errors.push(`Item ${index + 1}: Product description is required`);
+      if (item.quantity < 1) errors.push(`Item ${index + 1}: Quantity must be at least 1`);
+      if (item.valueSalesExcludingST < 0) errors.push(`Item ${index + 1}: Value cannot be negative`);
+    });
+
+    showValidationResults(errors);
+    return errors.length === 0;
+  }
+function interpretFbrValidation(resp) {
+  const vr = resp?.validationResponse;
+
+  const headerOk = vr?.statusCode === "00" || vr?.status === "Valid";
+
+  const itemErrors = (vr?.invoiceStatuses || [])
+    .filter(x => (x?.statusCode && x.statusCode !== "00") || (x?.status && x.status !== "Valid") || (x?.error && x.error.trim()))
+    .map(x => `Item ${x.itemSNo || "?"}: ${x.errorCode ? `[${x.errorCode}] ` : ""}${x.error || "Invalid"}`);
+
+  const ok = headerOk && itemErrors.length === 0;
+
+  return {
+    ok,
+    title: ok ? "Invoice validated successfully." : "Invoice validation failed.",
+  messages: ok ? [] : (itemErrors.length ? itemErrors : [vr?.error || "Invalid response from FBR."])
+  };
+}
+
+  // ------------------------------
+  // UPDATED: Validate button now calls FBR validate API
+  // ------------------------------
+  async function validateInvoice() {
+  if (!runLocalValidation()) return;
+
+  const validateBtn = document.getElementById('validateBtn');
+  validateBtn.disabled = true;
+  validateBtn.innerHTML = '<span class="spinner"></span> Validating...';
+
+  const payload = buildPayload();
+
+  try {
+    const response = await fetch(VALIDATE_URL, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json',
+        'Authorization': `Bearer ${AUTH_TOKEN}`
+      },
+      body: JSON.stringify(payload)
+    });
+
+    const text = await response.text(); // ✅ read once
+
+    let data = null;
+    const trimmed = text.trim();
+    const isJson = trimmed.startsWith('{') || trimmed.startsWith('[');
+
+    if (isJson) data = JSON.parse(trimmed);
+
+    if (!isJson) {
+      showValidationResults([`FBR returned non-JSON response (HTTP ${response.status}).`]);
+      console.error('Validate non-JSON:', text);
+      return;
+    }
+const result = interpretFbrValidation(data);
+
+    if (response.ok && result.ok) {
+  document.getElementById('successMessage').textContent = 'Invoice validated successfully.';
+
+document.getElementById('responseData').style.display = 'none';
+document.getElementById('responseJson').textContent = '';
+
+
+  document.getElementById('successModal').classList.add('active');
+
+  showValidationResults([]); // green inline (your function treats [] as success)
+} else {
+  document.getElementById('errorMessage').textContent =
+    result.messages[0] || data?.responseMessage || 'Failed to validate invoice.';
+
+  document.getElementById('errorModal').classList.add('active');
+
+  showValidationResults(result.messages); // red inline list
+}
+  } catch (error) {
+    console.error('Validate error:', error);
+    showValidationResults(['Network/parse error while calling FBR validate API.']);
+  } finally {
+    validateBtn.disabled = false;
+    validateBtn.innerHTML = `
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="M9 11l3 3L22 4"/>
+        <path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/>
+      </svg>
+      Validate Invoice
+    `;
+  }
+}
+
+
+  // ------------------------------
+  // Submit to FBR (unchanged) - uses SUBMIT_URL now
+  // ------------------------------
+  async function submitInvoice(event) {
+    event.preventDefault();
+
+    // local validation first
+    if (!runLocalValidation()) return;
+
+    const submitBtn = document.getElementById('submitBtn');
+    submitBtn.disabled = true;
+    submitBtn.innerHTML = '<span class="spinner"></span> Submitting...';
+
+    const payload = buildPayload();
+
+    try {
+      const response = await fetch(SUBMIT_URL, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json',
+          'Authorization': `Bearer ${AUTH_TOKEN}`
+        },
+        body: JSON.stringify(payload)
+      });
+
+      const data = await response.json();
+const result = interpretFbrValidation(data);
+
+    if (response.ok && result.ok) {
+        document.getElementById('successMessage').textContent = 'Invoice submitted successfully to FBR!';
+        if (data) {
+document.getElementById('responseData').style.display = 'none';
+document.getElementById('responseJson').textContent = '';
+        }
+        document.getElementById('successModal').classList.add('active');
+      } else {
+         document.getElementById('errorMessage').textContent =
+    result.messages[0] || data?.responseMessage || 'Failed to validate invoice.';
+
+  document.getElementById('errorModal').classList.add('active');
+
+  showValidationResults(result.messages); 
+      }
+    } catch (error) {
+      console.error('Error:', error);
+      document.getElementById('errorMessage').textContent = 'Network error. Please check your connection and try again.';
+      document.getElementById('errorModal').classList.add('active');
+    } finally {
+      submitBtn.disabled = false;
+      submitBtn.innerHTML = `
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M22 2L11 13"/><path d="M22 2L15 22l-4-9-9-4 20-7z"/>
+        </svg>
+        Submit to FBR
+      `;
+    }
+  }
+
+  function showValidationResults(errors) {
+    const container = document.getElementById('validationResults');
+    const icon = document.getElementById('validationIcon');
+    const title = document.getElementById('validationTitle');
+    const list = document.getElementById('validationList');
+
+    container.classList.remove('success', 'error');
+    container.classList.add('show');
+
+    if (errors.length === 0) {
+      container.classList.add('success');
+      icon.innerHTML = '<path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/>';
+      title.textContent = 'Validation Passed';
+      list.innerHTML = '<li>All fields are valid. FBR validation passed.</li>';
+    } else {
+      container.classList.add('error');
+      icon.innerHTML = '<circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>';
+      title.textContent = `Validation Failed (${errors.length} issue${errors.length > 1 ? 's' : ''})`;
+      list.innerHTML = errors.map(e => `<li>${e}</li>`).join('');
+    }
+  }
+
+  function hideValidationResults() {
+    document.getElementById('validationResults').classList.remove('show');
+  }
+
+  function closeModal(modalId) {
+    document.getElementById(modalId).classList.remove('active');
+  }
+
+  function resetForm() {
+    document.getElementById('invoiceForm').reset();
+    items = [createDefaultItem()];
+    expandedItem = 0;
+    initializeDefaults();
+    renderItems();
+    closeModal('successModal');
+    setActiveSection('seller');
+    document.getElementById('itemCount').textContent = '1';
+    hideValidationResults();
+  }
+
+  function exportPayload() {
+    const payload = buildPayload();
+    const blob = new Blob([JSON.stringify(payload, null, 2)], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `invoice-${document.getElementById('invoiceRefNo').value || 'draft'}.json`;
+    a.click();
+    URL.revokeObjectURL(url);
+  }
+
+  // Close modals on overlay click
+  document.querySelectorAll('.modal-overlay').forEach(overlay => {
+    overlay.addEventListener('click', (e) => {
+      if (e.target === overlay) {
+        overlay.classList.remove('active');
+      }
+    });
+  });
+</script>
+
+</body>
+</html>
