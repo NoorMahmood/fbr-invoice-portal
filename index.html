@@ -1912,8 +1912,9 @@ const result = interpretFbrValidation(data);
 
   const fbrInvoiceNo = headerInvoiceNo || itemInvoiceNos[0] || 'N/A';
 
-  document.getElementById('successMessage').textContent =
-    `Submitted! Ref No: ${clientRefNo} | FBR Invoice No: ${fbrInvoiceNo}`;
+document.getElementById('successMessage').innerHTML =
+  `Invoice Submitted Successfully to FBR.<br>Ref No: ${clientRefNo}<br>FBR Invoice No: ${fbrInvoiceNo}`;
+
 
   document.getElementById('successModal').classList.add('active');
       } else {
