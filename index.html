@@ -1141,7 +1141,7 @@
             </div>
             <div class="form-group full-width">
               <label>Address <span class="required">*</span></label>
-              <textarea id="sellerAddress" value="Lahore" placeholder="Enter complete business address" rows="2" required minlength="5" disabled>Lahore</textarea>
+              <textarea id="sellerAddress" value="Lahore" placeholder="Enter complete business address" rows="2" required minlength="5" disabled>14th Floor, New State Life Tower,Islamabad,Pakistan</textarea>
             </div>
           </div>
 
@@ -1357,7 +1357,20 @@
             <polyline points="22 4 12 14.01 9 11.01"/>
           </svg>
         </div>
-        <p id="successMessage">Your invoice has been submitted to FBR.</p>
+        <div style="display:flex; gap:10px; align-items:center; justify-content:center;">
+  <p id="successMessage" style="margin:0;">Your invoice has been submitted to FBR.</p>
+
+  <button type="button" class="btn-icon" onclick="copyTextById('successMessage')" title="Copy">
+    <!-- clipboard icon -->
+    <svg width="16" height="16" viewBox="0 0 24 24"
+      fill="none" stroke="currentColor" stroke-width="2"
+      stroke-linecap="round" stroke-linejoin="round">
+      <path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/>
+      <rect x="8" y="2" width="8" height="4" rx="1" ry="1"/>
+    </svg>
+  </button>
+</div>
+
         <div class="response-data" id="responseData" style="display: none;">
           <pre id="responseJson"></pre>
         </div>
@@ -1842,6 +1855,23 @@ document.getElementById('responseJson').textContent = '';
   }
 }
 
+function copyTextById(id) {
+  const text = (document.getElementById(id)?.textContent || '').trim();
+  if (!text) return;
+
+  navigator.clipboard.writeText(text).catch(() => {
+    const ta = document.createElement('textarea');
+    ta.value = text;
+    ta.style.position = 'fixed';
+    ta.style.top = '-9999px';
+    document.body.appendChild(ta);
+    ta.focus();
+    ta.select();
+    document.execCommand('copy');
+    document.body.removeChild(ta);
+  });
+}
+
 
   // ------------------------------
   // Submit to FBR (unchanged) - uses SUBMIT_URL now
@@ -1873,12 +1903,19 @@ document.getElementById('responseJson').textContent = '';
 const result = interpretFbrValidation(data);
 
     if (response.ok && result.ok) {
-        document.getElementById('successMessage').textContent = 'Invoice submitted successfully to FBR!';
-        if (data) {
-document.getElementById('responseData').style.display = 'none';
-document.getElementById('responseJson').textContent = '';
-        }
-        document.getElementById('successModal').classList.add('active');
+        const clientRefNo = payload.invoiceRefNo; 
+
+  const headerInvoiceNo = data?.invoiceNumber; 
+  const itemInvoiceNos = (data?.validationResponse?.invoiceStatuses || [])
+    .map(x => x.invoiceNo)
+    .filter(Boolean);
+
+  const fbrInvoiceNo = headerInvoiceNo || itemInvoiceNos[0] || 'N/A';
+
+  document.getElementById('successMessage').textContent =
+    `Submitted! Ref No: ${clientRefNo} | FBR Invoice No: ${fbrInvoiceNo}`;
+
+  document.getElementById('successModal').classList.add('active');
       } else {
          document.getElementById('errorMessage').textContent =
     result.messages[0] || data?.responseMessage || 'Failed to validate invoice.';
