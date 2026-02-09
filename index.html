@@ -1586,14 +1586,14 @@
   <label>SRO No.</label>
   <select onchange="updateItem(${index}, 'sroScheduleNo', this.value)">
     <option value="" ${!item.sroScheduleNo ? 'selected' : ''} disabled>-- Select SRO No. --</option>
-    <option value="ICTO_TABLE_I" ${item.sroScheduleNo === 'ICTO_TABLE_I' ? 'selected' : ''}>ICTO TABLE I</option>
-    <option value="ICTO_TABLE_II" ${item.sroScheduleNo === 'ICTO_TABLE_II' ? 'selected' : ''}>ICTO TABLE II</option>
-    <option value="NINTH_SCHEDULE" ${item.sroScheduleNo === 'NINTH_SCHEDULE' ? 'selected' : ''}>NINTH SCHEDULE</option>
-    <option value="SECTION_4B" ${item.sroScheduleNo === 'SECTION_4B' ? 'selected' : ''}>Section 4(b)</option>
-    <option value="SECTION_49" ${item.sroScheduleNo === 'SECTION_49' ? 'selected' : ''}>SECTION 49</option>
-    <option value="SRO_342_1_2002" ${item.sroScheduleNo === 'SRO_342_1_2002' ? 'selected' : ''}>SRO 342 (1)/2002</option>
-    <option value="ZERO_RATED_ELEC" ${item.sroScheduleNo === 'ZERO_RATED_ELEC' ? 'selected' : ''}>Zero Rated Elec.</option>
-    <option value="ZERO_RATED_GAS" ${item.sroScheduleNo === 'ZERO_RATED_GAS' ? 'selected' : ''}>Zero Rated Gas</option>
+    <option value="ICTO TABLE I" ${item.sroScheduleNo === 'ICTO TABLE I' ? 'selected' : ''}>ICTO TABLE I</option>
+    <option value="ICTO TABLE II" ${item.sroScheduleNo === 'ICTO TABLE II' ? 'selected' : ''}>ICTO TABLE II</option>
+    <option value="NINTH SCHEDULE" ${item.sroScheduleNo === 'NINTH SCHEDULE' ? 'selected' : ''}>NINTH SCHEDULE</option>
+    <option value="SECTION 4B" ${item.sroScheduleNo === 'SECTION 4B' ? 'selected' : ''}>Section 4(b)</option>
+    <option value="SECTION 49" ${item.sroScheduleNo === 'SECTION 49' ? 'selected' : ''}>SECTION 49</option>
+    <option value="SRO 342 (I)/2002" ${item.sroScheduleNo === 'SRO 342 (I)/2002' ? 'selected' : ''}>SRO 342 (1)/2002</option>
+    <option value="ZERO RATED ELEC" ${item.sroScheduleNo === 'ZERO RATED ELEC' ? 'selected' : ''}>Zero Rated Elec.</option>
+    <option value="ZERO RATED GAS" ${item.sroScheduleNo === 'ZERO RATED GAS' ? 'selected' : ''}>Zero Rated Gas</option>
   </select>
 </div>
 
@@ -1601,6 +1601,7 @@
   <label>Item S.No.</label>
   <select onchange="updateItem(${index}, 'sroItemSerialNo', this.value)">
     <option value="" ${!item.sroItemSerialNo ? 'selected' : ''} disabled>-- Select Item S.No. --</option>
+	<option value="11" ${item.sroItemSerialNo === '11' ? 'selected' : ''}>11</option>
     <option value="11(iv)" ${item.sroItemSerialNo === '11(iv)' ? 'selected' : ''}>11(iv)</option>
     <option value="11(v)" ${item.sroItemSerialNo === '11(v)' ? 'selected' : ''}>11(v)</option>
     <option value="11(vi)" ${item.sroItemSerialNo === '11(vi)' ? 'selected' : ''}>11(vi)</option>
