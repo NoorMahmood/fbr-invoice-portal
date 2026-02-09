@@ -1582,6 +1582,35 @@
 </select>
 
             </div>
+<div class="form-group">
+  <label>SRO No.</label>
+  <select onchange="updateItem(${index}, 'sroScheduleNo', this.value)">
+    <option value="" ${!item.sroScheduleNo ? 'selected' : ''} disabled>-- Select SRO No. --</option>
+    <option value="ICTO_TABLE_I" ${item.sroScheduleNo === 'ICTO_TABLE_I' ? 'selected' : ''}>ICTO TABLE I</option>
+    <option value="ICTO_TABLE_II" ${item.sroScheduleNo === 'ICTO_TABLE_II' ? 'selected' : ''}>ICTO TABLE II</option>
+    <option value="NINTH_SCHEDULE" ${item.sroScheduleNo === 'NINTH_SCHEDULE' ? 'selected' : ''}>NINTH SCHEDULE</option>
+    <option value="SECTION_4B" ${item.sroScheduleNo === 'SECTION_4B' ? 'selected' : ''}>Section 4(b)</option>
+    <option value="SECTION_49" ${item.sroScheduleNo === 'SECTION_49' ? 'selected' : ''}>SECTION 49</option>
+    <option value="SRO_342_1_2002" ${item.sroScheduleNo === 'SRO_342_1_2002' ? 'selected' : ''}>SRO 342 (1)/2002</option>
+    <option value="ZERO_RATED_ELEC" ${item.sroScheduleNo === 'ZERO_RATED_ELEC' ? 'selected' : ''}>Zero Rated Elec.</option>
+    <option value="ZERO_RATED_GAS" ${item.sroScheduleNo === 'ZERO_RATED_GAS' ? 'selected' : ''}>Zero Rated Gas</option>
+  </select>
+</div>
+
+<div class="form-group">
+  <label>Item S.No.</label>
+  <select onchange="updateItem(${index}, 'sroItemSerialNo', this.value)">
+    <option value="" ${!item.sroItemSerialNo ? 'selected' : ''} disabled>-- Select Item S.No. --</option>
+    <option value="11(iv)" ${item.sroItemSerialNo === '11(iv)' ? 'selected' : ''}>11(iv)</option>
+    <option value="11(v)" ${item.sroItemSerialNo === '11(v)' ? 'selected' : ''}>11(v)</option>
+    <option value="11(vi)" ${item.sroItemSerialNo === '11(vi)' ? 'selected' : ''}>11(vi)</option>
+    <option value="11(vii)" ${item.sroItemSerialNo === '11(vii)' ? 'selected' : ''}>11(vii)</option>
+    <option value="11(viii)" ${item.sroItemSerialNo === '11(viii)' ? 'selected' : ''}>11(viii)</option>
+    <option value="110" ${item.sroItemSerialNo === '110' ? 'selected' : ''}>110</option>
+    <option value="110(a)" ${item.sroItemSerialNo === '110(a)' ? 'selected' : ''}>110(a)</option>
+    <option value="110(b)" ${item.sroItemSerialNo === '110(b)' ? 'selected' : ''}>110(b)</option>
+  </select>
+</div>
 
 <div class="form-group">
   <label>Tax Rate <span class="required">*</span></label>
