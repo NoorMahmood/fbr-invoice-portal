@@ -1129,14 +1129,14 @@
             </div>
             <div class="form-group">
               <label>Province <span class="required">*</span></label>
-              <select id="sellerProvince" value="Punjab" required disabled>
+              <select id="sellerProvince" value="Capital Territory" required disabled>
                 <option value="Punjab">Punjab</option>
                 <option value="Sindh">Sindh</option>
                 <option value="Khyber Pakhtunkhwa">Khyber Pakhtunkhwa</option>
                 <option value="Balochistan">Balochistan</option>
-                <option value="Islamabad Capital Territory">Islamabad Capital Territory</option>
-                <option value="Gilgit-Baltistan">Gilgit-Baltistan</option>
-                <option value="Azad Kashmir">Azad Kashmir</option>
+                <option value="Capital Territory"  selected>Islamabad Capital Territory</option>
+                <option value="Gilgit-Baltistan">Gilgit Baltistan</option>
+                <option value="Azad Kashmir">Azad Jammu And Kashmir</option>
               </select>
             </div>
             <div class="form-group full-width">
@@ -1174,11 +1174,11 @@
             <div class="form-group">
               <label>Province <span class="required">*</span></label>
               <select id="buyerProvince" required>
+			    <option value="Capital Territory">Islamabad Capital Territory</option>
                 <option value="Punjab">Punjab</option>
                 <option value="Sindh">Sindh</option>
                 <option value="Khyber Pakhtunkhwa">Khyber Pakhtunkhwa</option>
                 <option value="Balochistan">Balochistan</option>
-                <option value="Islamabad Capital Territory">Islamabad Capital Territory</option>
                 <option value="Gilgit-Baltistan">Gilgit-Baltistan</option>
                 <option value="Azad Kashmir">Azad Kashmir</option>
               </select>
@@ -1186,13 +1186,13 @@
             <div class="form-group">
               <label>Registration Type <span class="required">*</span></label>
               <select id="buyerRegistrationType" required>
-                <option value="Registered">Registered</option>
-                <option value="Unregistered" selected>Unregistered</option>
+                <option value="Registered" selected>Registered</option>
+                <option value="Unregistered">Unregistered</option>
               </select>
             </div>
             <div class="form-group full-width">
               <label>Address <span class="required">*</span></label>
-              <textarea id="buyerAddress" placeholder="Enter complete business address" rows="2" required minlength="5"></textarea>
+              <textarea id="buyerAddress" placeholder="Enter complete business address" rows="2" required minlength="5" onkeydown="if (event.key === 'Enter') event.preventDefault();"oninput="this.value = this.value.replace(/[\r\n]+/g, ' ');"></textarea>
             </div>
           </div>
 
@@ -1225,6 +1225,8 @@
               <select id="invoiceType" required>
                 <option value="Sale Invoice" selected>Sale Invoice</option>
                 <option value="Debit Note">Debit Note</option>
+				<option value="Credit Note">Credit Note</option>
+
               </select>
             </div>
             <div class="form-group">
@@ -1255,8 +1257,8 @@
   <option value="SN015">SN015 - Mobile Phones</option>
   <option value="SN016">SN016 - Processing/ Conversion of Goods</option>
   <option value="SN017">SN017 - Goods (FED in ST Mode)</option>
-  <option value="SN018" selected>SN018 - Services (FED in ST Mode)</option>
-  <option value="SN019">SN019 - Services</option>
+  <option value="SN018">SN018 - Services (FED in ST Mode)</option>
+  <option value="SN019" selected>SN019 - Services</option>
   <option value="SN020">SN020 - Electric Vehicle</option>
   <option value="SN021">SN021 - Cement /Concrete Block</option>
   <option value="SN022">SN022 - Potassium Chlorate</option>
@@ -1465,9 +1467,9 @@
 
   function createDefaultItem() {
     return {
-      hsCode: '',
+      hsCode: '9815.6000',
       productDescription: '',
-      rate: '8%',
+      rate: '5%',
       uoM: '',
       quantity: 1,
       totalValues: 0,
@@ -1477,11 +1479,11 @@
       salesTaxWithheldAtSource: 0,
       extraTax: 0,
       furtherTax: 0,
-      sroScheduleNo: '',
+      sroScheduleNo: 'ICTO TABLE II',
       fedPayable: 0,
       discount: 0,
-      saleType: 'Services (FED in ST Mode)',
-      sroItemSerialNo: '',
+      saleType: 'Services',
+      sroItemSerialNo: '11',
       currency: 'PKR'
     };
   }
